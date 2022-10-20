@@ -2,7 +2,7 @@
 
 | PIANOTO |
 | :-----: |
-| <img width="700" alt="A screenshot of the PIANOTO interface" src="https://user-images.githubusercontent.com/9104039/193407898-fa4fe8e7-4b4f-4389-83f8-e1f69892cdf6.png"> |
+| <img width="700" alt="A screenshot of the PIANOTO interface" src="https://user-images.githubusercontent.com/116280269/196989277-0e5e262c-4cf2-47f4-a596-cde2fbde5ce9.png"> |
 |**Expressive piano performances** creation|
 
 This repository holds the source code for PIANOTO, a web-based, AI-assisted interactive music creation app.
@@ -11,7 +11,7 @@ This repository holds the source code for PIANOTO, a web-based, AI-assisted inte
 
 It is an A.I.-powered interactive MIDI piano roll, for mobile and desktop. Swipe on the musical representation to regenerate zones, always staying coherent with the context.
 
-https://user-images.githubusercontent.com/9104039/193406815-5adf940a-de74-4bb0-a151-6f3e32ea9b6a.mp4
+https://user-images.githubusercontent.com/116280269/196991005-d517d567-793f-4f3b-9993-be069007608b.mp4
 
 This app is based on *inpainting*, that is, the use of AI-models to transform images, sounds or sheets in a *local* fashion: just tell the model which zones of the media you'd like to transform (because you don't like it or because you'd like to see a variation of it!) and it will regenerate it for you. PIANOTO applies this concept to the creation of expressive piano performances, in MIDI format. Thanks to the intuitive interactions offered by inpainting, PIANOTO removes the need for cumbersome micro-level edits and works nicely on mobile as well!
 

@@ -1,0 +1,533 @@
+@use 'sass:color';
+@use 'mixins/colors.module';
+@use 'mixins/measures';
+@use 'mixins/interfaces';
+@import 'mixins/imports';
+
+.control-label,
+[nexus-ui] {
+  text-transform: capitalize;
+}
+
+.control-item,
+.control-label {
+  &,
+  * {
+    align-self: center;
+    align-content: normal;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+  }
+}
+.control-item {
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  select,
+  input {
+    display: inline-grid;
+  }
+
+  svg {
+    overflow: visible;
+  }
+}
+
+.loading-control {
+  cursor: wait;
+
+  & * {
+    pointer-events: none !important;
+  }
+}
+
+// #bottom-controls .control-item .fa-solid {
+//   font-size: measures.$cycleSelect-size;
+// }
+
+#bottom-controls,
+#configuration-selection-container {
+  [nexus-ui] {
+    &,
+    > div > div {
+      width: fit-content !important;
+      height: fit-content !important;
+    }
+    select,
+    input,
+    .nexus-text-button {
+      width: max-content !important;
+      height: max-content !important;
+    }
+  }
+  #start-button[nexus-ui] {
+    width: 50% !important;
+    min-width: fit-content;
+    height: 100% !important;
+    div {
+      width: 100% !important;
+    }
+  }
+}
+
+#bottom-controls,
+#configuration-selection-container {
+  [nexus-ui] {
+    display: inline-grid;
+    max-width: 100%;
+    > div > div {
+      padding: 0.5em !important;
+    }
+
+    select,
+    input {
+      text-align: center;
+      font-size: min(7vh, 7vw, 15px) !important;
+    }
+    select {
+      vertical-align: middle;
+      top: 50%;
+      max-width: 100%;
+    }
+    input {
+      height: min(25px, 10vh) !important;
+      width: min(4ch, 10vw) !important;
+    }
+  }
+
+  border-top-style: solid;
+
+  > .gridspan {
+    box-sizing: border-box;
+  }
+}
+
+.hidden {
+  @include interfaces.hiddenControl();
+}
+
+.control-label {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#bottom-controls {
+  font-size: normal;
+
+  .gridspan .gridspan {
+    &,
+    *:not(.fa-solid):not(.cycleSelect) {
+      font-size: smaller;
+    }
+  }
+  .gridspan .gridspan {
+    font-size: smaller;
+  }
+}
+
+#instruments-control-gridspan {
+  grid-row: 1;
+  grid-column: 3;
+}
+
+#instruments-grid {
+  grid-template-columns: auto;
+  grid-auto-columns: auto;
+  grid-auto-flow: column;
+}
+
+.gridspan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#playback-commands-gridspan {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+#record-commands-gridspan {
+  grid-row: 2;
+  grid-column: 4;
+
+  .record-controls-container {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.record-button-interface {
+  & {
+    cursor: pointer;
+  }
+}
+
+.record-button--recording,
+.record-button--ready-for-recording,
+.playback-command--stopped {
+  @include fa-size($fa-size-scale-2xl);
+}
+.playback-command--stopped {
+  @include fa-icon-solid($fa-var-play);
+}
+.playback-command--playing,
+.record-button--recording {
+  @include fa-icon-solid($fa-var-stop);
+}
+.record-button--ready-for-recording {
+  @include fa-icon-solid($fa-var-circle);
+}
+.record-button--waiting,
+.playback-command--waiting {
+  opacity: 0.3;
+  @include fa-icon-solid($fa-var-circle-notch);
+}
+
+// .disabled-gridspan i.record-button--ready-for-recording,
+#record-commands-gridspan {
+  .record-button--ready-for-recording,
+  .record-button--recording {
+    color: rgb(92, 0, 0);
+  }
+  &.disabled-gridspan .record-button-interface {
+    filter: grayscale(0.3) brightness(0.6);
+  }
+}
+
+#bpm-control-gridspan {
+  grid-row: 1;
+  grid-column: 4;
+}
+.pianoto #bpm-control-gridspan {
+  grid-column: 3;
+}
+.playback-rate-control {
+  .nexus-slider-knob {
+    stroke-width: 2;
+  }
+}
+@media screen and (max-width: 270px) {
+  .playback-rate-control {
+    transform: scale(0.5);
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+  }
+}
+
+#download-button-gridspan {
+  grid-row: 2;
+  grid-column: 1;
+}
+.pianoto #download-button-gridspan {
+  grid-row: 1;
+  grid-column: 4;
+}
+
+#constraints-gridspan {
+  grid-row: 1;
+  grid-column: 3/5;
+}
+
+#constraints-container {
+  grid-template-columns: 50%;
+}
+
+#pitch-control-octave-control input {
+  width: max(3ch, 5em) !important;
+}
+
+#edit-tools-gridspan {
+  grid-row: 1;
+  grid-column: 2/3;
+
+  #edit-tool-setup-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 5%;
+
+    [nexus-ui] {
+      max-width: 100%;
+      select {
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+#midi-input-setup-gridspan {
+  grid-row: 2;
+  grid-column: 3/5;
+}
+
+#midi-output-setup-gridspan {
+  grid-row: 2;
+  grid-column: 2/4;
+  .gridspan {
+    grid-template-columns: 100%;
+  }
+}
+
+#bottom-controls > .gridspan {
+  > :nth-child(2n) {
+    width: 90%;
+    height: 100%;
+    border-radius: 5px;
+  }
+}
+
+#midi-input-setup-gridspan,
+#midi-output-setup-gridspan {
+  &.midi-enabled .control-item {
+    select {
+      filter: invert(1);
+    }
+  }
+
+  [nexus-ui] select {
+    width: max-content !important;
+    max-width: 90%;
+  }
+
+  &.disabled-gridspan {
+    font-size: min(0.7em, 3vw);
+    max-height: 50%;
+  }
+}
+
+#mixing-controls-gridspan {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+#ableton-link-settings-gridspan {
+  grid-row: 2;
+  grid-column: 4/5;
+}
+
+.gridspan {
+  align-items: center;
+  justify-items: center;
+
+  display: inline-grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 3fr 1fr;
+  grid-auto-flow: column;
+
+  .control-label,
+  .control-item {
+    flex-basis: auto;
+  }
+  .gridspan {
+    grid-template-columns: auto;
+    grid-auto-columns: auto;
+  }
+}
+
+#bottom-controls .gridspan .gridspan {
+  .control-label {
+    opacity: 0.8;
+  }
+  .gridspan .control-label {
+    opacity: 0.6;
+  }
+}
+
+.multi-column-gridspan {
+  grid-template-rows: 1fr;
+}
+
+// used to display an error message in place of controls,
+// e.g. in case of missing Web MIDI API support
+// TODO(theis, 2021_04_21): could replace this with actually rendering
+// the associated controls, but graying them out/visibly disabling them,
+// and offering more info through an info-bubble (with touchscreen support)
+$disabled-gridspan-filter: blur(1.3px);
+
+.disabled-gridspan {
+  > :not(.control-label) {
+    filter: $disabled-gridspan-filter;
+    backdrop-filter: $disabled-gridspan-filter;
+
+    cursor: not-allowed;
+    color: gray;
+    * {
+      pointer-events: none;
+    }
+  }
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 450px) {
+  #pitch-control-container,
+  #volume-controls-container {
+    grid-template-rows: auto;
+    grid-auto-flow: row;
+    * {
+      max-width: 95%;
+    }
+  }
+  #pitch-control-container {
+    .control-label {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 450px) {
+  #midi-input-setup-container {
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    #midi-input-device-select-container {
+      grid-column: 1/3;
+    }
+  }
+}
+
+@mixin two-lines-midi-in-setup {
+  #midi-input-setup-container {
+    grid-auto-flow: column;
+    grid-template-rows: unset;
+    grid-template-columns: auto 1fr 1fr;
+    .control-label {
+      max-width: 100%;
+      justify-self: left;
+    }
+    #midi-input-channel-input-container {
+      grid-row: 2;
+      grid-column: 2;
+    }
+    #midi-input-device-select-container {
+      grid-column: 2/4;
+    }
+    @media screen and (max-width: 450px) {
+      grid-template-columns: 1fr 1fr;
+      #midi-input-device-select-container {
+        grid-column: 1/3;
+      }
+      .control-label {
+        display: none;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 450px) and (min-width: 270px) {
+  @include two-lines-midi-in-setup();
+}
+
+@media screen and (max-width: 270px) {
+  body.advanced-controls,
+  body.force-advanced-controls {
+    #bottom-controls {
+      grid-template-rows: 1fr 1fr;
+      row-gap: 0.5vh;
+    }
+  }
+  body:not(.controls-hidden) {
+    .gridspan {
+      grid-template-rows: 1fr;
+      padding: 0.25vh 0;
+    }
+  }
+  #bottom-controls {
+    grid-template-rows: 1fr;
+  }
+  .control-label {
+    display: none !important;
+  }
+  #instruments-grid {
+    *::after {
+      display: none !important;
+    }
+  }
+}
+
+.download-button-interface {
+  position: relative;
+  height: 2.5em;
+  width: 2.5em;
+
+  :not(a) {
+    pointer-events: none;
+  }
+
+  a,
+  i {
+    font-size: 2.5em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.download-button-interface,
+#load-samples-button-interface {
+  cursor: pointer;
+}
+
+#load-samples-button {
+  #load-samples-button-interface {
+    @include fa-icon-solid($fa-var-arrow-alt-circle-down);
+    @include fa-size($fa-size-scale-2xl);
+  }
+  &.loading-control {
+    #load-samples-button-interface {
+      @include fa-icon-solid($fa-var-spinner);
+    }
+  }
+}
+
+body.pianoto {
+  #midi-output-setup-gridspan {
+    grid-row: 2;
+    grid-column: 2/3;
+    .gridspan {
+      grid-template-rows: auto;
+    }
+  }
+  @include two-lines-midi-in-setup();
+  #midi-input-setup-gridspan {
+    grid-column: 3/4;
+  }
+}
+
+#bottom-controls #midi-file-select-gridspan {
+  [nexus-ui] {
+    width: 80% !important;
+    > select {
+      width: 100% !important;
+    }
+  }
+}
+
+// HACK(@REDACTED, 2022/09/12): use of ID necessary to surpass CSS specificity
+#pia-hyperparameters-controls-gridspan {
+  grid-row: 2;
+  grid-column: 1;
+  .pia-hyperparameters-controls-container {
+    @media screen and (max-width: 600px) {
+      grid-auto-flow: column;
+      grid-template-rows: auto;
+      grid-template-columns: auto auto;
+      .control-label {
+        overflow: hidden;
+        max-width: 100%;
+        justify-self: left;
+        grid-column: 1;
+      }
+      svg {
+        transform: scale(0.8);
+        transform-origin: 50% 50%;
+        transform-box: fill-box;
+      }
+    }
+    .modified-value {
+      fill: red;
+    }
+  }
+}

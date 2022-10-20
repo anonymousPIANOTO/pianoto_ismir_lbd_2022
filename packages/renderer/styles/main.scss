@@ -1,0 +1,647 @@
+// TODO(theis, 2020/12/10): check/clean-up usage of .advanced class
+// children nodes should inherit the appropriate behaviour from their container
+// and note require setting the class on all nodes
+
+@use 'mixins/colors.module';
+@use 'mixins/measures';
+@use 'mixins/interfaces';
+@use 'mixins/fonts';
+@use 'sass:color';
+
+@import 'mixins/imports';
+@import 'mixins/_measures';
+
+html,
+body {
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  overflow: hidden;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  *:focus {
+    outline: unset;
+  }
+}
+
+a {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+body.splash-screen {
+  -webkit-app-region: drag;
+  #configuration-selection {
+    -webkit-app-region: no-drag;
+  }
+  #app {
+    display: none;
+  }
+}
+
+input {
+  border: none;
+  outline: none;
+}
+
+// default theme, also used on the splash-screen
+@include colors.theme-colors();
+
+body.running {
+  &[theme='millenial-pink'] {
+    @include colors.theme-colors(millenial-pink);
+  }
+  &[theme='lavender-dark'] {
+    @include colors.theme-colors(lavender-dark);
+  }
+  &[theme='dark'] {
+    @include colors.theme-colors(dark);
+  }
+  &[theme='lavender-light'] {
+    @include colors.theme-colors(lavender-light);
+  }
+  &[theme='black-white'] {
+    @include colors.theme-colors(black-white);
+  }
+}
+
+body {
+  font-family: fonts.$interface-font-stack;
+  font-weight: fonts.$interface-font-weight;
+
+  // disable blue box over objects on touch
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+
+  user-select: none;
+  z-index: 0;
+}
+
+body.hidden-cursor {
+  &,
+  * {
+    cursor: none !important;
+  }
+}
+
+.simplebar-dragging *:hover {
+  cursor: grabbing !important;
+}
+
+.inpainter {
+  &.sheet-inpainter svg,
+  .spectrogram-inpainter-image-container img {
+    transition-property: opacity;
+    transition-duration: 0.3s;
+  }
+}
+
+.inpainter.busy {
+  &.sheet-inpainter svg,
+  .spectrogram-inpainter-image-container img {
+    opacity: 0.3;
+  }
+}
+.inpainter:not(.piano-roll-inpainter).busy {
+  > :not(.loading-spinner-container):not(.simplebar-track) {
+    // emulate modal overlay, highlighting the loading indicator
+    // FIXME(@REDACTED, 2022/02/18): fix NOTONO scrollbar still disabled by this
+    //  -> this is because the :not() based selection is improper, should target specific objects
+    & * {
+      cursor: wait !important;
+      pointer-events: none !important;
+    }
+  }
+}
+.piano-roll-inpainter.busy {
+  .midi-visualizer {
+    background-color: color.scale(black, $lightness: +10%);
+    // filter: brightness(0.9);
+    cursor: wait;
+  }
+  .midi-visualizer-notes-container {
+    // emulate modal overlay, highlighting the loading indicator
+    // filter: blur(0.5px);
+    pointer-events: none !important;
+  }
+}
+
+.inpainter.busy {
+  .loading-spinner {
+    opacity: 1;
+  }
+}
+
+.inpainter.initializing {
+  > :not(.loading-spinner-container) {
+    opacity: 0;
+  }
+}
+
+.sheet-inpainter-stacking-container {
+  top: 15vh;
+}
+
+body.notono {
+  .simplebar-track.simplebar-vertical {
+    display: none;
+  }
+}
+
+.inpainter .simplebar-track {
+  @include fa-icon-solid($fa-var-lock-open);
+  @include fa-size($fa-size-scale-xl);
+  &::before {
+    opacity: 0.4;
+  }
+  &:hover {
+    &::before {
+      opacity: 1;
+    }
+  }
+  &.scroll-lock {
+    @include fa-icon-solid($fa-var-lock);
+    &::before {
+      opacity: 1;
+      animation: 2s fa-beat linear infinite alternate;
+      --fa-beat-scale: 0.9;
+    }
+    &:hover::before {
+      animation-play-state: paused;
+    }
+  }
+
+  &::before {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    border-radius: 100%;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  &.simplebar-horizontal::before {
+    height: 2em;
+    width: 2em;
+    top: 0;
+    left: calc(-2em - 1.5vw);
+  }
+
+  &.simplebar-vertical::before {
+    width: 2em;
+    height: 2em;
+    top: calc(-2em - 1.5vh);
+
+    margin-bottom: 2em;
+  }
+}
+
+.loading-spinner-container {
+  // TODO(@REDACTED): remove usage of pointer-events
+  z-index: 10;
+  pointer-events: none;
+}
+
+.inpainter.in-dragdrop-operation::after {
+  width: 100%;
+  height: 100%;
+  background-color: color.scale(black, $alpha: -30%);
+}
+
+body.notono,
+body.nonoto {
+  .inpainter .simplebar-track.simplebar-vertical::before {
+    display: none;
+  }
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+[nexus-ui] select *,
+[nexus-ui] input * {
+  font-family: fonts.$interface-font-stack !important;
+}
+
+[nexus-ui] * {
+  font-weight: fonts.$interface-font-weight !important;
+}
+
+[nexus-ui] input {
+  font-weight: 700 !important;
+}
+
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto;
+  height: 100%;
+  grid-template-areas:
+    'header'
+    'main'
+    'footer';
+
+  @media screen and (max-height: 300px) {
+    grid-template-areas:
+      'main'
+      'footer';
+    grid-template-rows: 1fr auto;
+
+    .application-header {
+      display: none;
+    }
+  }
+}
+
+#app > .application-header {
+  grid-area: header;
+}
+
+#app > #main-panel {
+  grid-area: main;
+  overflow: hidden; // ensures the main panel does not push the footer down
+}
+
+#app > #bottom-controls {
+  grid-area: footer;
+}
+
+.application-header,
+#main-panel,
+#bottom-controls {
+  width: 100vw;
+}
+
+#main-panel {
+  position: relative !important;
+  z-index: 0;
+  display: flex;
+  pointer-events: auto;
+
+  position: absolute;
+
+  justify-content: center;
+  align-content: center;
+
+  &.loading {
+    .inpainter .simplebar-track {
+      // hide scrollbars when the inpainter is loading
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+.loading-spinner-container {
+  &::before {
+    visibility: hidden;
+  }
+}
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+
+  transition: all 0.3s ease-in-out;
+  filter: drop-shadow(0px 0px 3px black);
+}
+
+$trapezoid-perspective-transform: perspective(10px) rotateX(8deg);
+$inverse-trapezoid-perspective-transform: perspective(10px) rotateX(-8deg);
+$inverse-trapezoid-perspective-transform-left: perspective(10px) rotateX(-8deg);
+$inverse-trapezoid-perspective-transform-right: perspective(-10px) rotate(20deg);
+
+#bottom-controls {
+  display: grid;
+  transform-style: preserve-3D;
+  padding: 5px 2.5%;
+  width: auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 5%;
+  align-items: center;
+  justify-items: center;
+  z-index: 0;
+
+  opacity: 1;
+
+  box-shadow: 0px -1px 3px 0px rgba(0, 0, 0, 0.21);
+
+  text-align: center;
+}
+
+.expand-tab-container {
+  .expand-tab-display {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: -10%;
+    // translateZ is used to ensure the content is behind the parent container
+    // this is required since the parent container creates a stacking context
+    // furthermore the Z-axis translation should happen before the trapezoid transform,
+    // otherwise it messes up the perspective
+    transform: $trapezoid-perspective-transform;
+  }
+
+  transform: translateZ(-100px) translate(-50%, 0);
+  position: absolute;
+  cursor: pointer;
+  width: 40%;
+
+  height: measures.$expand-tab-container-height;
+  top: calc(0px - #{measures.$expand-tab-container-height});
+  overflow-x: visible;
+  font-family: monospace;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  .expand-tab-left-button,
+  .expand-tab-right-button {
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    &::before {
+      position: relative;
+      top: 3%;
+    }
+    &:hover {
+      filter: brightness(1.3);
+      font-size: larger;
+    }
+  }
+  .expand-tab-left-button {
+    border-right: thin solid;
+    @include fa-icon-solid($fa-var-angle-down);
+  }
+  .expand-tab-right-button {
+    border-left: thin solid;
+    @include fa-icon-solid($fa-var-angle-up);
+  }
+
+  font-size: x-large;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  transition-property: top, height, font-size;
+  transition-duration: 0.1s;
+  animation-timing-function: ease-in;
+  left: 50%;
+  z-index: -1;
+  border-radius: 5px 5px 0 0;
+
+  @media (hover: hover) {
+    // enable show on hover if device supports hovering;
+    height: calc(3 * #{measures.$expand-tab-container-height} / 4);
+    top: calc(0px - 3 *#{measures.$expand-tab-container-height} / 4);
+  }
+
+  &:hover {
+    height: measures.$expand-tab-container-height;
+    top: calc(0px - #{measures.$expand-tab-container-height});
+  }
+}
+body.controls-hidden {
+  .expand-tab-left-button {
+    @include fa-icon-solid($fa-var-angles-up);
+  }
+}
+body.advanced-controls {
+  .expand-tab-right-button {
+    @include fa-icon-solid($fa-var-angles-down);
+  }
+}
+
+body.help-tour-on {
+  .expand-tab-container {
+    // disable advanced controls expansion tab when browsing the help menu,
+    // we automatically expand all controls to show the help
+    visibility: hidden;
+  }
+}
+
+body.controls-hidden:not(.force-advanced-controls) {
+  #bottom-controls {
+    padding: 0;
+    .control-item,
+    .control-label {
+      display: none;
+    }
+  }
+}
+body:not(.advanced-controls) {
+  .advanced {
+    &,
+    .control-item,
+    .control-label {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 270px) {
+  .control-label {
+    display: none !important;
+  }
+}
+
+select {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: large !important;
+  text-transform: capitalize;
+  text-align-last: center; // see https://stackoverflow.com/a/34532555
+}
+
+.grid-auto-column {
+  align-items: center;
+  justify-items: center;
+  display: grid;
+  width: 100%;
+  grid-auto-flow: column;
+  row-gap: 5%;
+}
+
+.disabled {
+  @include interfaces.hiddenControl;
+  color: lightgray;
+  cursor: not-allowed;
+
+  & * {
+    pointer-events: none !important;
+  }
+}
+
+#lfo-controls {
+  display: grid;
+  width: 40%;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+}
+
+#granularity-select-container {
+  img[src*='whole'] {
+    width: 45%;
+  }
+}
+
+.center {
+  margin: auto;
+}
+
+#bpm-control {
+  & svg rect {
+    transform: scaleY(0.6);
+    y: 25;
+    rx: 5;
+    ry: 10;
+  }
+}
+
+.disable-mouse {
+  pointer-events: none;
+}
+
+.inpainter.transparent-scrollbar .simplebar-track {
+  opacity: 0.7;
+}
+
+.inpainter.error {
+  .loading-spinner-container {
+    @include fa-icon-solid($fa-var-bomb);
+    &:before {
+      color: #a13636;
+      animation: small-shake 1.5s linear 0.1s infinite,
+        flash 2s normal 0.2s forwards;
+      display: block;
+    }
+  }
+}
+
+@keyframes small-shake {
+  0% {
+    transform: rotate(-6deg);
+  }
+  4% {
+    transform: rotate(6deg);
+  }
+  8%,
+  24% {
+    transform: rotate(-9deg);
+  }
+  12%,
+  28% {
+    transform: rotate(9deg);
+  }
+  16% {
+    transform: rotate(-13deg);
+  }
+  20% {
+    transform: rotate(13deg);
+  }
+  32% {
+    transform: rotate(-3deg);
+  }
+  36% {
+    transform: rotate(3deg);
+  }
+  40%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0%;
+    visibility: visible;
+  }
+  10% {
+    opacity: 100%;
+  }
+  99% {
+    opacity: 0%;
+  }
+  100% {
+    opacity: 0%;
+    visibility: hidden;
+  }
+}
+
+$zoom-border-radius: 5px;
+.zoom-control {
+  left: $main-area-additional-controls-horizontal-offset;
+  top: $main-area-additional-controls-vertical-offset;
+}
+.fullscreen-control {
+  right: $main-area-additional-controls-horizontal-offset;
+  bottom: $main-area-additional-controls-vertical-offset;
+}
+
+.zoom-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 3px;
+  justify-items: center;
+}
+
+.zoom-control,
+.fullscreen-control,
+.reset-loop-control {
+  position: absolute;
+  &,
+  > div {
+    border-radius: calc(#{$zoom-border-radius});
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  div {
+    cursor: pointer;
+
+    &:hover i {
+      filter: brightness(1.15);
+    }
+  }
+}
+.zoom-control,
+.fullscreen-control,
+.reset-loop-control,
+.help-icon {
+  transition: transform 0.5s;
+  @media screen and (max-width: 500px) {
+    transform: scale(0.6);
+  }
+}
+
+$padding-length: clamp(0.2rem, 4vw, 0.5rem);
+.zoom-control {
+  .zoom-in,
+  .zoom-out {
+    padding: $padding-length;
+  }
+  .zoom-out {
+    border-radius: $zoom-border-radius 0 0 $zoom-border-radius;
+  }
+  .zoom-in {
+    border-radius: 0 $zoom-border-radius $zoom-border-radius 0;
+    padding: $padding-length;
+  }
+}
+
+.fullscreen-control,
+.reset-loop-control {
+  > div {
+    padding: $padding-length;
+  }
+}

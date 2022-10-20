@@ -1,0 +1,36 @@
+.sheet-inpainter {
+  width: 100%;
+  .simplebar-wrapper {
+    height: 100%;
+
+    .simplebar-content-wrapper {
+      height: 100%;
+    }
+  }
+
+  .inpainter-interface-container {
+    width: max-content;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .notebox::after {
+    transition: opacity 0.5s;
+  }
+  .notebox:hover::after {
+    transition: none;
+  }
+}
+
+.sheet-inpainter-sheet {
+  z-index: 0;
+  width: 10000000px; // HACK infinite width
+  margin-left: auto;
+  margin-right: auto;
+
+  pointer-events: none;
+  * {
+    pointer-events: none;
+  }
+}

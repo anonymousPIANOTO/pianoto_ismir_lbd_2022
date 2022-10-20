@@ -1,0 +1,368 @@
+@use './mixins/measures';
+@use './mixins/colors.module';
+@use 'sass:color';
+
+$spectrogram-height: 83%;
+$spectrogram-height-no-scroll: 90%;
+
+.spectrogram-inpainter {
+  .spectrogram-inpainter-image-container,
+  .inpainter-interface-container {
+    height: $spectrogram-height;
+  }
+  .spectrogram-inpainter-frequency-scale-container {
+    height: calc(#{$spectrogram-height} + 1.5rem);
+    canvas {
+      height: 100%;
+    }
+  }
+}
+
+.spectrogram-inpainter.no-scroll {
+  .spectrogram-inpainter-image-container,
+  .inpainter-interface-container {
+    height: $spectrogram-height-no-scroll;
+  }
+  .spectrogram-inpainter-frequency-scale-container {
+    height: calc(#{$spectrogram-height-no-scroll} + 1.5rem);
+  }
+}
+
+.spectrogram-inpainter {
+  height: 97%;
+  width: 100%;
+  margin-left: 0vw;
+
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: -1;
+
+  background: transparent;
+  [nexus-ui] {
+    position: absolute;
+    left: 0;
+  }
+
+  &.no-scroll .simplebar-track.simplebar-horizontal {
+    display: none;
+    visibility: hidden;
+  }
+
+  .spectrogram-inpainter-snap-points {
+    // ensures snap points are within the visible spectrogram image canvas
+    // this is required so that they are taken into account
+    position: absolute;
+    top: 0;
+    margin-left: -5vw;
+    display: flex;
+    height: 1px;
+    visibility: hidden;
+  }
+
+  .spectrogram-inpainter-interface {
+    span,
+    svg {
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+    svg {
+      box-sizing: border-box;
+    }
+
+    position: absolute;
+  }
+  .spectrogram-inpainter-interface {
+    rect {
+      stroke-width: 2.2px;
+    }
+  }
+}
+
+.spectrogram-inpainter-interface.disabled-layer {
+  visibility: hidden;
+  z-index: -1;
+  rect {
+    pointer-events: none;
+  }
+
+  .sequencer-grid-overlay span {
+    // visibility: hidden;
+  }
+}
+
+.inpainter {
+  .simplebar-scroll-content {
+    pointer-events: none;
+  }
+
+  .simplebar-track.simplebar-horizontal {
+    position: absolute;
+    bottom: 10%;
+  }
+}
+
+body.nonoto {
+  .simplebar-track.simplebar-horizontal {
+    bottom: 10%;
+  }
+}
+body.notono {
+  .simplebar-track.simplebar-horizontal {
+    bottom: -10%;
+  }
+}
+
+.spectrogram-inpainter {
+  .simplebar-content-wrapper {
+    scroll-snap-type: x mandatory;
+
+    snap {
+      scroll-snap-align: start;
+      display: inline-flex;
+      flex: 1;
+      visibility: hidden;
+    }
+  }
+}
+
+.spectrogram-inpainter-image-container,
+.spectrogram-inpainter-scale-container {
+  position: absolute;
+  pointer-events: none;
+}
+.spectrogram-inpainter-frequency-scale-container {
+  z-index: 1;
+  left: 2vw;
+  top: calc(5% - 1rem);
+}
+
+.spectrogram-inpainter-time-scale-container {
+  z-index: 2;
+  width: calc(90vw + 1em);
+  left: calc(5vw - 0.5em);
+  bottom: 10%;
+}
+.spectrogram-inpainter.no-scroll {
+  .spectrogram-inpainter-time-scale-container {
+    bottom: 2%;
+  }
+}
+
+.spectrogram-inpainter-image-container {
+  top: 5%;
+  width: 100vw;
+
+  picture {
+    position: relative;
+    left: 5vw;
+
+    img {
+      margin-right: 5vw;
+      top: 0;
+    }
+
+    > * {
+      top: 0;
+      position: relative;
+      pointer-events: none;
+      z-index: -1000;
+    }
+  }
+}
+
+.spectrogram-inpainter-shadow-container {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.sequencer-toggle-visual {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.spectrogram-inpainter .inpainter-interface-container {
+  transition: none;
+  position: absolute;
+  margin-left: measures.$spectrogram-margin-width;
+  width: measures.$spectrogram-width !important;
+  top: 5%;
+  z-index: 0;
+
+  .sequencer-grid-overlay {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    pointer-events: none;
+
+    span {
+      box-sizing: border-box;
+      background: radial-gradient(
+        color.change(white, $alpha: 0),
+        color.change(white, $alpha: 0.2) 80%,
+        color.change(white, $alpha: 0.4)
+      );
+      border: 0.2emem solid rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0);
+      transform: scale3d(1.1, 1.05, 1);
+      border-radius: 0.5em;
+      height: 100%;
+      flex-direction: column;
+      flex: 1;
+      opacity: 0;
+    }
+  }
+
+  // svg,
+  svg *:not(.sequencer-toggle-visual) {
+    pointer-events: all;
+  }
+
+  * {
+    transition-timing-function: ease-in-out;
+  }
+
+  &::before,
+  &:after {
+    z-index: 0;
+    content: '';
+    position: absolute;
+    width: measures.$spectrogram-margin-width;
+    top: 0;
+    height: 100%;
+    background-size: cover;
+    will-change: width;
+    transform: perspective(500px);
+  }
+}
+
+.spectrogram-inpainter-interface {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  rect {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+  svg {
+    rect:not(.sequencer-toggle-visual) {
+      stroke-opacity: 1;
+      opacity: 0.1 !important;
+      fill: transparent;
+      fill-opacity: 0;
+      stroke-width: 2px;
+    }
+    rect.sequencer-toggle-visual {
+      rx: 0.2px;
+      stroke-width: 1.5px;
+
+      will-change: opacity, fill-opacity, stroke-opacity;
+      // Disabled because it consumes too much resources
+      // animation: pulseOpacity 1s ease-in-out alternate infinite;
+      // --target-opacity: 0;
+      transition-property: opacity, fill, stroke, fill-opacity, stroke-opacity;
+      transition-property: opacity; //, fill, stroke, fill-opacity, stroke-opacity;
+      transition-duration: 0.25s;
+
+      opacity: 0;
+      fill-opacity: 0.8;
+      stroke-opacity: 1;
+    }
+    &.selected rect.sequencer-toggle-visual {
+      // --target-opacity: 0.8;
+      transition-property: none;
+      opacity: 0.8;
+    }
+
+    &:hover {
+      rect.sequencer-toggle-visual {
+        // --target-opacity: 0.9;
+        transition-property: none;
+        opacity: 1;
+      }
+    }
+  }
+  @keyframes pulseOpacity {
+    to {
+      fill-opacity: var(--target-opacity);
+      stroke-opacity: var(--target-opacity);
+    }
+  }
+}
+
+.spectrogram-inpainter.busy .sequencer-toggle-visual {
+  transition-property: opacity, fill, stroke, fill-opacity, stroke-opacity !important;
+  transition-duration: 0.4s;
+}
+.spectrogram-inpainter.busy .selected .sequencer-toggle-visual {
+  transition-duration: 1s;
+}
+.spectrogram-inpainter.busy .selected .sequencer-toggle-visual {
+  // stroke-opacity: 0.7;
+  // fill-opacity: 1;
+  opacity: 1;
+}
+.spectrogram-inpainter.playing :not(.disabled-layer) {
+  .sequencer-grid-overlay span.sequencer-playing {
+    opacity: 0.5;
+  }
+}
+
+.highlight {
+  animation: highlight 1s ease-in-out 2 alternate;
+}
+
+@keyframes highlight {
+  to {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.simplebar-content {
+  height: 100%;
+}
+
+// HACK: compensate for scrollbar in Firefox
+@-moz-document url-prefix() {
+  .ff {
+    .simplebar-content {
+      margin-top: 4.5px;
+    }
+  }
+}
+
+.spectrogram-inpainter {
+  .spectrogram-inpainter-interface {
+    &.bottom * {
+      cursor: url(../static/icons/cursor/arabian_sand/paintbrush-solid.svg) 0 28,
+        pointer;
+    }
+    &.top * {
+      cursor: url(../static/icons/cursor/arabian_sand/brush-solid.svg) 10 0,
+        pointer;
+    }
+  }
+  .eraser .spectrogram-inpainter-interface {
+    * {
+      cursor: url(../static/icons/cursor/arabian_sand/eraser-solid.svg) 2 18,
+        pointer !important;
+    }
+  }
+  .randomize .spectrogram-inpainter-interface {
+    &.bottom * {
+      cursor: url(../static/icons/cursor/arabian_sand/paintbrush-random-solid.svg)
+          0 28,
+        pointer;
+    }
+    &.top * {
+      cursor: url(../static/icons/cursor/arabian_sand/brush-random-solid.svg) 10
+          0,
+        pointer;
+    }
+  }
+}

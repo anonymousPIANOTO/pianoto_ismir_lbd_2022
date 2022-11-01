@@ -1,4 +1,6 @@
-# PIANOTO -- Submission for the ISMIR'22 Late-Breaking Demos
+# PIANOTO – Submission for the ISMIR'22 Late-Breaking Demos
+
+## [HOSTED DEMO (private link, do not share)](https://anonymousPIANOTO.github.io/pianoto_ismir_lbd_2022/)
 
 | PIANOTO |
 | :-----: |
@@ -51,6 +53,8 @@ npm start
 ```
 
 ## Running the model locally
+
+PIANOTO was developed around the [PIA model](https://ghadjeres.github.io/piano-inpainting-application/) by Hadjeres et al.
 
 We **strongly** recommend running this image on a machine equipped with an NVIDIA CUDA-compatible GPU.
 
